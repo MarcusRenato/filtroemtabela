@@ -4,7 +4,24 @@ try {
 } catch (PDOException $e) {
     echo "Erro: " . $e->getMessage();
 }
+
+if (isset($_POST['sexo']) && $_POST['sexo'] != '') {
+    $sexo = $_POST['sexo'];
+    $sql = $pdo->prepare("SELECT * FROM usuarios WHERE sexo = ?");
+    $sql->execute(array($sexo));
+} else {
+    $sexo = '';
+    $sql = $pdo->query("SELECT * FROM usuarios");
+}
 ?>
+<form method="post">
+    <select name="sexo">
+        <option></option>
+        <option value="0" <?= ($sexo == '0') ? 'selected="selected"':'' ?> >Masculino</option>
+        <option value="1" <?= ($sexo == '1') ? 'selected="selected"':'' ?>>Feminino</option>
+    </select>
+    <input type="submit" value="Filtrar">
+</form>
 
 <table border="1" width="100%">
     <tr>
@@ -17,7 +34,6 @@ try {
         '0' => 'Masculino',
         '1' => 'Feminino'
     );
-    $sql = $pdo->query("SELECT * FROM usuarios");
 
     if ($sql->rowCount() > 0) {
         foreach ($sql->fetchAll() as $user):
